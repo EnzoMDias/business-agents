@@ -1,2 +1,0 @@
-start_discovery.ps1
-start_production.ps1
