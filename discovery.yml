@@ -69,12 +69,7 @@ agents:
       - synthesizer
     toolsets:
       - type: filesystem
-        allowed_paths:
-          - ${DISCOVERY_PATH}
-          - ${AGENTS_PATH}
       - type: shell
-        allowed_commands:
-          - git
       - type: think
       - type: todo
         shared: true
@@ -392,9 +387,6 @@ agents:
 
     toolsets:
       - type: filesystem
-        allowed_paths:
-          - ${DISCOVERY_PATH}
-          - ${AGENTS_PATH}
       - type: think
     add_date: true
 
@@ -403,27 +395,3 @@ models:
     provider: anthropic
     model: claude-sonnet-4-6
     token_key: ANTHROPIC_API_KEY
-
-metadata:
-  project: discovery
-  readme: |
-    Departamento de Descoberta — business-agents
-
-    Execução:
-      .\start_discovery.ps1
-
-    Fluxo:
-      1. Partilha a tua ideia inicial com o coordinator.
-      2. Responde às perguntas do discovery.
-      3. Analisa o debate architect vs challenger.
-      4. Aprova as decisões.
-      5. Aprova o briefing final.
-      6. Os documentos são gerados em DISCOVERY_PATH/discovery/.
-      7. Só então avança para production.yml.
-
-    Comandos disponíveis:
-      docker agent run discovery.yml "status"
-      docker agent run discovery.yml "checkpoint"
-      docker agent run discovery.yml "resume"
-      docker agent run discovery.yml "propose_architecture"
-      docker agent run discovery.yml "finalize"

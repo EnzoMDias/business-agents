@@ -69,13 +69,7 @@ agents:
       - qa
     toolsets:
       - type: filesystem
-        allowed_paths:
-          - ${PROJECT_PATH}
-          - ${DISCOVERY_PATH}
-          - ${AGENTS_PATH}
       - type: shell
-        allowed_commands:
-          - git
       - type: think
       - type: todo
         shared: true
@@ -150,10 +144,6 @@ agents:
 
     toolsets:
       - type: filesystem
-        allowed_paths:
-          - ${PROJECT_PATH}
-          - ${DISCOVERY_PATH}
-          - ${AGENTS_PATH}
       - type: think
       - type: todo
         shared: true
@@ -196,10 +186,6 @@ agents:
 
     toolsets:
       - type: filesystem
-        allowed_paths:
-          - ${PROJECT_PATH}
-          - ${DISCOVERY_PATH}
-          - ${AGENTS_PATH}
       - type: shell
       - type: think
       - type: todo
@@ -243,10 +229,6 @@ agents:
 
     toolsets:
       - type: filesystem
-        allowed_paths:
-          - ${PROJECT_PATH}
-          - ${DISCOVERY_PATH}
-          - ${AGENTS_PATH}
       - type: shell
       - type: think
       - type: todo
@@ -288,10 +270,6 @@ agents:
 
     toolsets:
       - type: filesystem
-        allowed_paths:
-          - ${PROJECT_PATH}
-          - ${DISCOVERY_PATH}
-          - ${AGENTS_PATH}
       - type: shell
       - type: think
       - type: todo
@@ -334,10 +312,6 @@ agents:
 
     toolsets:
       - type: filesystem
-        allowed_paths:
-          - ${PROJECT_PATH}
-          - ${DISCOVERY_PATH}
-          - ${AGENTS_PATH}
       - type: shell
       - type: think
       - type: todo
@@ -383,10 +357,6 @@ agents:
 
     toolsets:
       - type: filesystem
-        allowed_paths:
-          - ${PROJECT_PATH}
-          - ${DISCOVERY_PATH}
-          - ${AGENTS_PATH}
       - type: shell
       - type: think
       - type: todo
@@ -403,17 +373,3 @@ models:
     provider: anthropic
     model: claude-sonnet-4-6
     token_key: ANTHROPIC_API_KEY
-
-metadata:
-  project: production
-  readme: |
-    Departamento de Produção — Software House
-
-    Pré-requisito: briefing completo e aprovado pelo discovery.yml.
-
-    Execução:
-      .\start_production.ps1
-
-    Os agentes escrevem directamente em PROJECT_PATH.
-    Após cada tarefa, o coordinator apresenta um review para aprovação.
-    Só após aprovação explícita a tarefa é marcada como concluída.
