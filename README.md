@@ -1,4 +1,4 @@
-# Software House — Time Multi-Agent
+# business-agents
 
 Time multi-agent completo para desenvolvimento de software, organizado em dois
 departamentos: **Descoberta** e **Produção**.
@@ -19,7 +19,7 @@ com base no que foi aprovado. A transição entre os dois é sempre manual e exp
 ## Estrutura
 
 ```
-software-house/
+business-agents/
 ├── discovery.yml          # Departamento de Descoberta
 ├── production.yml         # Departamento de Produção
 ├── start_discovery.ps1    # Arranque do discovery (não commitado)
@@ -45,7 +45,7 @@ software-house/
 | `challenger` | Questiona a proposta do architect, aponta riscos e pontos cegos |
 | `synthesizer` | Consolida o debate e gera os documentos finais aprovados |
 
-**Documentos gerados:**
+**Documentos gerados na pasta `discovery/`:**
 - `BRIEF.md` — resumo executivo do projecto
 - `ARCHITECTURE.md` — arquitectura aprovada
 - `DECISIONS.md` — registo de decisões (ADRs)
@@ -82,8 +82,8 @@ escrevem ficheiros e correm comandos directamente no projecto.
 
 **1. Clona o repositório**
 ```powershell
-git clone https://github.com/EnzoMDias/software-house.git
-cd software-house
+git clone https://github.com/EnzoMDias/business-agents.git
+cd business-agents
 ```
 
 **2. Cria os scripts de arranque** (não são commitados — ficam só na tua máquina)
@@ -128,13 +128,12 @@ docker agent run production.yml
 # Validas cada entrega antes de avançar
 ```
 
-**Comandos disponíveis no discovery:**
+**Comandos disponíveis:**
 ```powershell
+# Discovery
 docker agent run discovery.yml "status"
-```
 
-**Comandos disponíveis na produção:**
-```powershell
+# Produção
 docker agent run production.yml "status"
 docker agent run production.yml "review"
 docker agent run production.yml "validate_docs"
