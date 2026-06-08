@@ -1,183 +1,118 @@
-# business-agents
+# business-agents — Claude Code
 
-Time multi-agent completo para desenvolvimento de software, organizado em dois
-departamentos: **Descoberta** e **Produção**.
+Time multi-agent para desenvolvimento de software organizado em dois departamentos:
+**Descoberta** e **Produção**. Esta branch usa Claude Code em vez do Docker Agent —
+não requer chave de API separada, funciona com a assinatura Pro do claude.ai.
 
 ## Como funciona
 
 ```
 Ideia inicial
      ↓
-discovery.yml  →  debate  →  briefing aprovado por ti
-                                      ↓
-                             production.yml  →  implementação  →  review  →  aprovação tua
+/agent discovery  →  perguntas  →  respostas
+     ↓
+/agent architect  →  proposta de stack e arquitectura
+     ↓
+/agent challenger →  riscos e pontos cegos
+     ↓
+Utilizador aprova
+     ↓
+/agent synthesizer → gera documentos em discovery/
+     ↓
+/agent devops     →  prepara ambiente
+/agent dba        →  cria schema
+/agent backend_dev → implementa backend
+/agent frontend_dev → implementa frontend
+/agent qa         →  valida e emite parecer
+     ↓
+Utilizador aprova → commit
 ```
 
-O departamento de descoberta define tudo. O departamento de produção implementa
-com base no que foi aprovado. A transição entre os dois é sempre manual e explícita.
+O Claude Code sugere sempre o próximo agente a invocar no final de cada resposta.
+O teu trabalho é validar e invocar o agente sugerido com `/agent nome`.
 
 ## Estrutura
 
 ```
-business-agents/
-├── discovery.yml          # Departamento de Descoberta
-├── production.yml         # Departamento de Produção
-├── start_discovery.ps1    # Arranque do discovery (não commitado)
-├── start_production.ps1   # Arranque da produção (não commitado)
-├── .gitignore             # Ignora os scripts com a chave
-└── discovery/             # Documentos gerados pelo discovery (criados automaticamente)
-    ├── CHECKPOINT.md      # Estado da sessão — permite retomar de onde parou
-    ├── BRIEF.md
-    ├── ARCHITECTURE.md
-    ├── DECISIONS.md
-    ├── STACK.md
-    └── TASKS.md
+business-agents/  (branch: claude-code)
+├── CLAUDE.md                    # contexto global e regras de orquestração
+├── README.md
+└── .claude/
+    └── agents/
+        ├── discovery.md         # extrai o problema real
+        ├── architect.md         # propõe stack e arquitectura
+        ├── challenger.md        # questiona e aponta riscos
+        ├── synthesizer.md       # gera os documentos finais
+        ├── backend_dev.md       # implementa o backend
+        ├── frontend_dev.md      # implementa o frontend
+        ├── dba.md               # schema, migrations, índices
+        ├── devops.md            # ambiente e instalações
+        └── qa.md                # testes e validação
 ```
-
-## Departamento de Descoberta
-
-**Ficheiro:** `discovery.yml`
-
-| Agente | Papel |
-|---|---|
-| `root` | Coordinator — conduz o processo, garante que nada é fechado sem aprovação |
-| `discovery` | Extrai o problema real, identifica lacunas, formula perguntas certas |
-| `architect` | Propõe stack e arquitectura com alternativas e trade-offs |
-| `challenger` | Questiona a proposta do architect, aponta riscos e pontos cegos |
-| `synthesizer` | Consolida o debate e gera os documentos finais aprovados |
-
-**Documentos gerados na pasta `discovery/`:**
-- `CHECKPOINT.md` — estado actual da sessão, gravado automaticamente
-- `BRIEF.md` — resumo executivo do projecto
-- `ARCHITECTURE.md` — arquitectura aprovada
-- `DECISIONS.md` — registo de decisões (ADRs)
-- `STACK.md` — stack técnica completa com justificação
-- `TASKS.md` — primeiras tarefas para produção
-
-## Departamento de Produção
-
-**Ficheiro:** `production.yml`
-
-| Agente | Papel |
-|---|---|
-| `root` | Coordinator — orquestra o time, valida entregas |
-| `architect` | Detalha a estrutura técnica e os contratos |
-| `backend_dev` | Implementa o backend completo |
-| `frontend_dev` | Implementa o frontend completo |
-| `dba` | Schema, migrations, índices, optimizações de BD |
-| `devops` | Ambiente, instalações, dependências, configurações |
-| `qa` | Testes, validação, parecer de entrega |
-
-Os agentes de produção têm acesso total ao sistema via shell — instalam dependências,
-escrevem ficheiros e correm comandos directamente no projecto.
 
 ## Pré-requisitos
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado
-- Docker Agent instalado:
+- Subscrição Claude Pro — [claude.ai](https://claude.ai)
+- Claude Code instalado:
   ```powershell
-  winget install Docker.Agent
+  npm install -g @anthropic-ai/claude-code
   ```
-- Chave da API Anthropic — obtém em [console.anthropic.com](https://console.anthropic.com)
 
 ## Configuração inicial
 
-**1. Clona o repositório**
+**1. Clona o repositório na branch claude-code**
 ```powershell
-git clone https://github.com/EnzoMDias/business-agents.git
+git clone -b claude-code https://github.com/EnzoMDias/business-agents.git
 cd business-agents
 ```
 
-**2. Cria os scripts de arranque** (não são commitados — ficam só na tua máquina)
-
-`start_discovery.ps1`:
+**2. Abre o Claude Code na pasta**
 ```powershell
-$env:ANTHROPIC_API_KEY = "a-tua-chave-aqui"
-$env:DISCOVERY_PATH    = "$PSScriptRoot\discovery"
-$env:AGENTS_PATH       = $PSScriptRoot
-
-if (!(Test-Path $env:DISCOVERY_PATH)) {
-    New-Item -ItemType Directory -Path $env:DISCOVERY_PATH | Out-Null
-}
-
-docker agent run discovery.yml
+claude
 ```
 
-`start_production.ps1`:
-```powershell
-$env:ANTHROPIC_API_KEY = "a-tua-chave-aqui"
-$env:PROJECT_PATH      = "C:\caminho\para\o\projecto"
-$env:DISCOVERY_PATH    = "$PSScriptRoot\discovery"
-$env:AGENTS_PATH       = $PSScriptRoot
-
-docker agent run production.yml
-```
+O Claude Code lê o `CLAUDE.md` automaticamente e está pronto a usar.
 
 ## Utilização
 
-**Fase 1 — Descoberta:**
-```powershell
-.\start_discovery.ps1
-# O coordinator verifica automaticamente se há sessão anterior (CHECKPOINT.md)
-# Se houver, retoma de onde parou
-# Se não houver, aguarda a tua ideia inicial
+**Iniciar o discovery:**
+```
+/agent discovery
+```
+Partilha a tua ideia. O agente conduz o processo e sugere o próximo passo.
+
+**Retomar uma sessão após pausa:**
+```
+/agent discovery
+```
+Se existir `discovery/CHECKPOINT.md`, o agente retoma automaticamente de onde parou.
+
+**Fluxo típico de agentes:**
+```
+/agent discovery     → define o problema
+/agent architect     → propõe stack e arquitectura  
+/agent challenger    → questiona a proposta
+/agent synthesizer   → gera os documentos (após aprovação)
+/agent devops        → prepara o ambiente
+/agent dba           → cria o schema
+/agent backend_dev   → implementa o backend
+/agent frontend_dev  → implementa o frontend
+/agent qa            → valida e emite parecer
 ```
 
-**Fase 2 — Produção** (só após briefing aprovado):
-```powershell
-.\start_production.ps1
-# O coordinator lê o briefing e começa a implementar
-# Validas cada entrega antes de avançar
-```
+## Checkpoint — retomar sessões
 
-## Comandos disponíveis
+O estado do discovery é gravado automaticamente em `discovery/CHECKPOINT.md`.
+Quando retomares após dias de pausa, invoca `/agent discovery` — ele lê o
+checkpoint e continua de onde parou sem precisares de repetir nada.
 
-**Discovery:**
+## Comparação com a branch main (Docker Agent)
 
-| Comando | O que faz |
-|---|---|
-| `status` | Resume o estado actual — o que está definido e o que falta |
-| `checkpoint` | Grava o estado completo da sessão em `discovery/CHECKPOINT.md` |
-| `resume` | Lê o checkpoint e retoma de onde parou |
-| `propose_architecture` | Aciona architect + challenger e apresenta o debate |
-| `finalize` | Gera os documentos finais após todas as decisões aprovadas |
-
-```powershell
-docker agent run discovery.yml "status"
-docker agent run discovery.yml "checkpoint"
-docker agent run discovery.yml "resume"
-docker agent run discovery.yml "propose_architecture"
-docker agent run discovery.yml "finalize"
-```
-
-**Produção:**
-
-| Comando | O que faz |
-|---|---|
-| `status` | Estado actual das tarefas e próximo passo |
-| `review` | Resumo do que foi alterado — aguarda aprovação tua |
-| `validate_docs` | Verifica se os documentos do discovery estão completos |
-
-```powershell
-docker agent run production.yml "status"
-docker agent run production.yml "review"
-docker agent run production.yml "validate_docs"
-```
-
-## Retomar uma sessão após dias de pausa
-
-O `CHECKPOINT.md` é a memória persistente entre sessões. O coordinator grava-o
-automaticamente após cada decisão aprovada.
-
-Quando retomares:
-```powershell
-.\start_discovery.ps1
-# O coordinator lê o CHECKPOINT.md automaticamente e informa-te do estado
-# Podes continuar de onde parou sem repetir nada
-```
-
-## Segurança
-
-- Os scripts `start_*.ps1` estão no `.gitignore` — a chave da API nunca vai para o Git.
-- O discovery só escreve na pasta `discovery/`.
-- A produção só escreve em `PROJECT_PATH` e `DISCOVERY_PATH`.
+| | Docker Agent (main) | Claude Code (claude-code) |
+|---|---|---|
+| Orquestração | Automática | Semi-manual (/agent nome) |
+| Custo | ~€20-50/mês API | Incluído no Pro (~€18/mês) |
+| Próximo agente | Automático | Sugerido, tu invocas |
+| Checkpoint | Automático | Automático |
+| Acesso ao filesystem | Total | Total |
+| Acesso ao terminal | Total | Total |
