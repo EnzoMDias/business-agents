@@ -26,6 +26,7 @@ business-agents/
 ├── start_production.ps1   # Arranque da produção (não commitado)
 ├── .gitignore             # Ignora os scripts com a chave
 └── discovery/             # Documentos gerados pelo discovery (criados automaticamente)
+    ├── CHECKPOINT.md      # Estado da sessão — permite retomar de onde parou
     ├── BRIEF.md
     ├── ARCHITECTURE.md
     ├── DECISIONS.md
@@ -46,6 +47,7 @@ business-agents/
 | `synthesizer` | Consolida o debate e gera os documentos finais aprovados |
 
 **Documentos gerados na pasta `discovery/`:**
+- `CHECKPOINT.md` — estado actual da sessão, gravado automaticamente
 - `BRIEF.md` — resumo executivo do projecto
 - `ARCHITECTURE.md` — arquitectura aprovada
 - `DECISIONS.md` — registo de decisões (ADRs)
@@ -116,9 +118,9 @@ docker agent run production.yml
 **Fase 1 — Descoberta:**
 ```powershell
 .\start_discovery.ps1
-# Partilha a tua ideia com o coordinator
-# Responde às perguntas
-# Aprova o briefing final
+# O coordinator verifica automaticamente se há sessão anterior (CHECKPOINT.md)
+# Se houver, retoma de onde parou
+# Se não houver, aguarda a tua ideia inicial
 ```
 
 **Fase 2 — Produção** (só após briefing aprovado):
@@ -128,15 +130,50 @@ docker agent run production.yml
 # Validas cada entrega antes de avançar
 ```
 
-**Comandos disponíveis:**
-```powershell
-# Discovery
-docker agent run discovery.yml "status"
+## Comandos disponíveis
 
-# Produção
+**Discovery:**
+
+| Comando | O que faz |
+|---|---|
+| `status` | Resume o estado actual — o que está definido e o que falta |
+| `checkpoint` | Grava o estado completo da sessão em `discovery/CHECKPOINT.md` |
+| `resume` | Lê o checkpoint e retoma de onde parou |
+| `propose_architecture` | Aciona architect + challenger e apresenta o debate |
+| `finalize` | Gera os documentos finais após todas as decisões aprovadas |
+
+```powershell
+docker agent run discovery.yml "status"
+docker agent run discovery.yml "checkpoint"
+docker agent run discovery.yml "resume"
+docker agent run discovery.yml "propose_architecture"
+docker agent run discovery.yml "finalize"
+```
+
+**Produção:**
+
+| Comando | O que faz |
+|---|---|
+| `status` | Estado actual das tarefas e próximo passo |
+| `review` | Resumo do que foi alterado — aguarda aprovação tua |
+| `validate_docs` | Verifica se os documentos do discovery estão completos |
+
+```powershell
 docker agent run production.yml "status"
 docker agent run production.yml "review"
 docker agent run production.yml "validate_docs"
+```
+
+## Retomar uma sessão após dias de pausa
+
+O `CHECKPOINT.md` é a memória persistente entre sessões. O coordinator grava-o
+automaticamente após cada decisão aprovada.
+
+Quando retomares:
+```powershell
+.\start_discovery.ps1
+# O coordinator lê o CHECKPOINT.md automaticamente e informa-te do estado
+# Podes continuar de onde parou sem repetir nada
 ```
 
 ## Segurança
