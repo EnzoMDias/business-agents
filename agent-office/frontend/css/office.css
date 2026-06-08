@@ -1,0 +1,59 @@
+/* =============================================================================
+   office.css — Canvas pixel art, overlay de loading, cursor sobre personagens
+   Agent Office
+   ============================================================================= */
+
+/* --- Canvas pixel art nítido ---------------------------------------------- */
+/* O canvas tem width/height lógicos definidos pelo JS (384×256).             */
+/* CSS escala visualmente mantendo pixéis nítidos.                            */
+
+#office-canvas {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  /* Escala por altura: o wrapper tem height:100% e mantém o canvas proporcional */
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  display: block;
+  border: 1px solid #1a2030;
+}
+
+/* --- #canvas-wrapper -------------------------------------------------------- */
+/* main.css define flex:1, display:flex, align/justify center.               */
+/* Aqui apenas cursor.                                                         */
+
+#canvas-wrapper {
+  cursor: default;
+}
+
+/* --- Loading overlay ------------------------------------------------------- */
+
+#canvas-loading {
+  font-family: "Consolas", monospace;
+  letter-spacing: 0.05em;
+  /* Posição absoluta sobre o canvas */
+  z-index: 10;
+}
+
+#canvas-loading::after {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  background: currentColor;
+  border-radius: 50%;
+  margin-left: 6px;
+  vertical-align: middle;
+  animation: canvas-dot-blink 600ms step-start infinite;
+}
+
+@keyframes canvas-dot-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+#canvas-loading.hidden {
+  opacity: 0;
+  pointer-events: none;
+}

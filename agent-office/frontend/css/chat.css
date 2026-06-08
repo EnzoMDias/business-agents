@@ -1,0 +1,335 @@
+/* =============================================================================
+   chat.css — Mensagens, streaming, estados, badges e chips do chat
+   Agent Office — Canvas edition
+   ============================================================================= */
+
+/* --- Mensagem base --------------------------------------------------------- */
+
+.message {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 82%;
+  animation: msg-in 140ms ease-out both;
+}
+
+@keyframes msg-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Meta: agente + timestamp */
+.message-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
+
+.message-meta .meta-agent {
+  font-weight: 600;
+  color: var(--agent-color, var(--text-secondary));
+}
+
+.message-meta .meta-time {
+  color: var(--text-muted);
+}
+
+/* Balão da mensagem */
+.message-bubble {
+  padding: 10px 14px;
+  border-radius: var(--msg-radius);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  border: 1px solid transparent;
+}
+
+/* --- Mensagem do utilizador ----------------------------------------------- */
+
+.message.user {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+
+.message.user .message-bubble {
+  background-color: var(--bg-overlay);
+  border-color: var(--border-default);
+  color: var(--text-primary);
+  border-bottom-right-radius: 2px;
+}
+
+.message.user .message-meta {
+  flex-direction: row-reverse;
+}
+
+/* --- Mensagem do assistente ----------------------------------------------- */
+
+.message.assistant {
+  align-self: flex-start;
+  align-items: flex-start;
+}
+
+.message.assistant .message-bubble {
+  background-color: var(--bg-elevated);
+  border-color: var(--border-muted);
+  color: var(--text-primary);
+  border-bottom-left-radius: 2px;
+}
+
+/* Borda colorida do agente no lado esquerdo do balão do assistente */
+.message.assistant .message-bubble {
+  border-left: 3px solid var(--agent-color, var(--border-default));
+}
+
+/* --- Cursor piscante durante streaming ------------------------------------ */
+
+.message.assistant.streaming .message-bubble::after {
+  content: "";
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background-color: var(--agent-color, var(--accent-blue));
+  margin-left: 3px;
+  vertical-align: text-bottom;
+  animation: blink-cursor 800ms step-start infinite;
+  border-radius: 1px;
+}
+
+@keyframes blink-cursor {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* --- Cores de agente aplicadas via style inline (--agent-color) ----------- */
+/* As classes abaixo servem de fallback quando o JS não aplica o inline style */
+
+.message[data-agent="discovery"]    { --agent-color: var(--color-discovery); }
+.message[data-agent="architect"]    { --agent-color: var(--color-architect); }
+.message[data-agent="challenger"]   { --agent-color: var(--color-challenger); }
+.message[data-agent="synthesizer"]  { --agent-color: var(--color-synthesizer); }
+.message[data-agent="backend_dev"]  { --agent-color: var(--color-backend-dev); }
+.message[data-agent="frontend_dev"] { --agent-color: var(--color-frontend-dev); }
+.message[data-agent="dba"]          { --agent-color: var(--color-dba); }
+.message[data-agent="devops"]       { --agent-color: var(--color-devops); }
+.message[data-agent="qa"]           { --agent-color: var(--color-qa); }
+.message[data-agent="claude"]       { --agent-color: var(--color-claude); }
+
+/* --- Mensagem de erro inline ----------------------------------------------- */
+
+.message-error {
+  align-self: stretch;
+  padding: 10px 14px;
+  background-color: color-mix(in srgb, #ff7b72 8%, transparent);
+  border: 1px solid color-mix(in srgb, #ff7b72 35%, transparent);
+  border-radius: var(--msg-radius);
+  color: #ff7b72;
+  font-size: var(--font-size-sm);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  animation: msg-in 140ms ease-out both;
+}
+
+.message-error .error-icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.message-error .error-text {
+  font-family: var(--font-mono);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* --- Aviso de sessão expirada --------------------------------------------- */
+
+.session-expired-notice {
+  align-self: stretch;
+  padding: 12px 16px;
+  background-color: color-mix(in srgb, #ffa657 8%, transparent);
+  border: 1px solid color-mix(in srgb, #ffa657 35%, transparent);
+  border-radius: var(--msg-radius);
+  color: #ffa657;
+  font-size: var(--font-size-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: msg-in 140ms ease-out both;
+}
+
+.session-expired-notice .notice-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.session-expired-notice .notice-body {
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  line-height: 1.5;
+}
+
+.session-expired-notice .notice-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-new-session {
+  padding: 5px 14px;
+  background-color: #ffa657;
+  color: #0d1117;
+  border: none;
+  border-radius: 5px;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  font-family: var(--font-ui);
+}
+
+.btn-new-session:hover {
+  background-color: #e8904a;
+}
+
+.btn-dismiss {
+  padding: 5px 14px;
+  background-color: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: 5px;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-family: var(--font-ui);
+}
+
+.btn-dismiss:hover {
+  background-color: var(--bg-elevated);
+  color: var(--text-primary);
+}
+
+/* --- Estado de carregamento do histórico ---------------------------------- */
+
+.loading-history {
+  align-self: center;
+  padding: 8px 16px;
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.loading-history::before {
+  content: "";
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--border-default);
+  border-top-color: var(--accent-blue);
+  border-radius: 50%;
+  animation: spin 600ms linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* --- Separador de data/sessão --------------------------------------------- */
+
+.date-separator {
+  align-self: center;
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  padding: 2px 10px;
+  border: 1px solid var(--border-muted);
+  border-radius: 10px;
+  background-color: var(--bg-surface);
+  user-select: none;
+}
+
+/* --- Badge com nome do agente activo em cada mensagem --------------------- */
+
+.agent-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  padding: 0px 6px;
+  border-radius: 6px;
+  background-color: var(--bg-overlay);
+  border: 1px solid var(--border-muted);
+  color: var(--agent-color, var(--text-secondary));
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+/* --- Mensagem coordinator (estilo especial) ------------------------------- */
+
+.message-coordinator {
+  border-left: 3px solid var(--color-coordinator, #58a6ff) !important;
+}
+
+.message-coordinator .message-bubble {
+  background-color: color-mix(in srgb, #58a6ff 4%, var(--bg-elevated));
+}
+
+/* --- Chip de sugestão de próximo agente ----------------------------------- */
+
+.next-agent-chip {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background-color: color-mix(in srgb, var(--accent-blue) 8%, var(--bg-elevated));
+  border: 1px solid color-mix(in srgb, var(--accent-blue) 40%, var(--border-default));
+  border-radius: 20px;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  animation: msg-in 160ms ease-out both;
+  margin-top: 4px;
+}
+
+.chip-arrow {
+  font-size: 12px;
+  color: var(--accent-blue);
+}
+
+.chip-text {
+  color: var(--text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.agent-chip-btn {
+  padding: 2px 10px;
+  background-color: var(--accent-blue);
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), transform 80ms ease;
+  text-transform: lowercase;
+  letter-spacing: 0.04em;
+}
+
+.agent-chip-btn:hover {
+  background-color: var(--accent-hover);
+}
+
+.agent-chip-btn:active {
+  transform: scale(0.96);
+}

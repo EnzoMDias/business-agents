@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agent Office</title>
+  <link rel="stylesheet" href="/static/css/main.css" />
+  <link rel="stylesheet" href="/static/css/office.css" />
+  <link rel="stylesheet" href="/static/css/chat.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- ================================================================
+         OFFICE — Canvas pixel art (65% da largura)
+         ================================================================ -->
+    <div id="office-container">
+      <div id="office-header">
+        <span class="office-title">Agent Office</span>
+      </div>
+      <div id="canvas-wrapper">
+        <canvas id="office-canvas" aria-label="Escritório pixel art com os agentes"></canvas>
+        <div id="canvas-loading" aria-hidden="true">A inicializar...</div>
+      </div>
+    </div>
+
+    <!-- ================================================================
+         CHAT — Painel de conversa (35% da largura)
+         ================================================================ -->
+    <div id="chat-container">
+
+      <!-- Header do chat -->
+      <div id="chat-header">
+        <span id="active-agent-icon" aria-hidden="true"></span>
+        <span id="active-agent-name">coordinator</span>
+        <span id="agent-model" class="model-badge">claude-sonnet-4-6</span>
+        <span id="agent-state" class="state-badge idle">idle</span>
+        <div id="ws-status" class="disconnected" aria-live="polite" title="Estado da ligação WebSocket">
+          <span id="ws-status-dot"></span>
+          <span id="ws-status-label">A ligar...</span>
+        </div>
+      </div>
+
+      <!-- Área de mensagens -->
+      <div id="messages" role="log" aria-live="polite" aria-label="Mensagens da conversa">
+        <div id="messages-empty" aria-hidden="true">
+          <span class="empty-icon">&#128172;</span>
+          <span>Escreve uma mensagem para começar<br>ou clica numa personagem para seleccionar o agente</span>
+        </div>
+      </div>
+
+      <!-- Input -->
+      <div id="input-area">
+        <form id="input-form" autocomplete="off" novalidate>
+          <label for="message-input" class="sr-only">Mensagem</label>
+          <textarea
+            id="message-input"
+            name="message"
+            placeholder="Escreve uma mensagem... (Enter envia, Shift+Enter nova linha)"
+            rows="1"
+            aria-label="Campo de mensagem"
+          ></textarea>
+          <button
+            id="send-btn"
+            type="submit"
+            aria-label="Enviar mensagem"
+          >&#8593;</button>
+        </form>
+      </div>
+
+    </div><!-- #chat-container -->
+
+  </div><!-- #app -->
+
+  <script type="module" src="/static/js/app.js"></script>
+</body>
+</html>
